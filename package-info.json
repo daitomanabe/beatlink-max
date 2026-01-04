@@ -1,0 +1,19 @@
+{
+    "name": "beatlink",
+    "displayname": "Beat Link",
+    "version": "0.1.0",
+    "author": "Daito Manabe / Rhizomatiks",
+    "description": "Max external for receiving beat and tempo information from Pioneer DJ equipment via Pro DJ Link protocol",
+    "website": "https://github.com/daitomanabe/beat-link-cpp",
+    "tags": ["network", "dj", "sync", "midi", "ableton link"],
+    "os": {
+        "macos": {
+            "min_version": "10.15"
+        },
+        "windows": {
+            "min_version": "10"
+        }
+    },
+    "max_version_min": "8.0",
+    "max_version_max": "none"
+}

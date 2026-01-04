@@ -1,0 +1,28 @@
+# Build directories
+build/
+cmake-build-*/
+
+# IDE
+.idea/
+*.xcodeproj/
+*.xcworkspace/
+.vscode/
+
+# macOS
+.DS_Store
+*.dSYM/
+
+# Compiled externals (built via CMake)
+externals/
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*~
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
