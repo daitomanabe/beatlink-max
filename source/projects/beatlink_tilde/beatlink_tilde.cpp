@@ -1,13 +1,16 @@
 /// @file
 /// @ingroup    beatlink
-/// @copyright  Copyright 2024 Daito Manabe / Rhizomatiks. All rights reserved.
+/// @copyright  Copyright (c) 2024 Daito Manabe
 /// @license    MIT
 
 #include "c74_min.h"
 #include <beatlink/BeatLink.hpp>
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <queue>
+#include <string>
+#include <vector>
 
 using namespace c74::min;
 
@@ -32,6 +35,32 @@ public:
     outlet<> out_pitch      { this, "(float) pitch adjustment percentage" };
     outlet<> out_info       { this, "(list) device info messages" };
 
+private:
+    struct BeatInfo {
+        int device_number;
+        double bpm;
+        int beat_within_bar;
+        double pitch_percent;
+    };
+
+    struct InfoMessage {
+        std::string selector;
+        int device_number;
+        std::string device_name;
+        std::string address;
+    };
+
+    struct SharedState {
+        std::mutex mutex;
+        std::queue<BeatInfo> beat_queue;
+        std::queue<InfoMessage> info_queue;
+        std::atomic<bool> accepting{true};
+        std::atomic<int> device_filter{0};
+    };
+
+    std::shared_ptr<SharedState> m_state{std::make_shared<SharedState>()};
+
+public:
     // Attributes
     attribute<bool> autostart { this, "autostart", true,
         description { "Automatically start listening when object is created" }
@@ -39,14 +68,13 @@ public:
 
     attribute<int> filter_device { this, "device", 0,
         description { "Filter to specific device number (0 = all devices)" },
-        range { 0, 6 }
+        range { 0, 6 },
+        setter { MIN_FUNCTION {
+            int value = args[0];
+            m_state->device_filter.store(value);
+            return {value};
+        }}
     };
-
-    // Constructor
-    beatlink_tilde() {
-        // Schedule initialization for the main thread
-        m_init_timer.delay(100);
-    }
 
     // Destructor
     ~beatlink_tilde() {
@@ -90,8 +118,9 @@ public:
     };
 
 private:
-    // Timer for deferred initialization
-    timer<> m_init_timer { this,
+    // Use loadbang for autostart so Min's registration-time dummy instance does
+    // not open network sockets before a real Max object exists.
+    message<> loadbang { this, "loadbang", "Start listening when @autostart is enabled",
         MIN_FUNCTION {
             if (autostart) {
                 start_impl();
@@ -108,17 +137,6 @@ private:
         }
     };
 
-    // Thread-safe queue for beats received from network thread
-    struct BeatInfo {
-        int device_number;
-        double bpm;
-        int beat_within_bar;
-        double pitch_percent;
-    };
-
-    std::mutex m_beat_mutex;
-    std::queue<BeatInfo> m_beat_queue;
-
     std::atomic<bool> m_running{false};
     double m_last_bpm{0.0};
 
@@ -128,57 +146,22 @@ private:
             return;
         }
 
-        auto& deviceFinder = beatlink::DeviceFinder::getInstance();
-        auto& beatFinder = beatlink::BeatFinder::getInstance();
+        m_state->accepting.store(true);
+        m_state->device_filter.store(filter_device);
+        clear_pending_events();
+        register_client(m_state);
 
-        // Set up device listeners
-        deviceFinder.addDeviceFoundListener([this](const beatlink::DeviceAnnouncement& device) {
-            // Queue device found message
-            atoms as;
-            as.push_back("found");
-            as.push_back(static_cast<int>(device.getDeviceNumber()));
-            as.push_back(device.getDeviceName());
-            as.push_back(device.getAddress().to_string());
-            // Note: We can't safely call outlet from network thread
-            // This will be handled via the info outlet in the main thread
-        });
-
-        deviceFinder.addDeviceLostListener([this](const beatlink::DeviceAnnouncement& device) {
-            // Queue device lost message
-        });
-
-        // Set up beat listener
-        beatFinder.addBeatListener([this](const beatlink::Beat& beat) {
-            int device_num = beat.getDeviceNumber();
-            int filter = filter_device;
-
-            // Filter by device if specified
-            if (filter > 0 && device_num != filter) {
-                return;
-            }
-
-            BeatInfo info;
-            info.device_number = device_num;
-            info.bpm = beat.getEffectiveTempo();
-            info.beat_within_bar = beat.getBeatWithinBar();
-            info.pitch_percent = beatlink::Util::pitchToPercentage(beat.getPitch());
-
-            {
-                std::lock_guard<std::mutex> lock(m_beat_mutex);
-                m_beat_queue.push(info);
-            }
-        });
-
-        // Start finders
-        if (!deviceFinder.start()) {
+        if (!beatlink::DeviceFinder::getInstance().start()) {
             cerr << "beatlink~: Failed to start DeviceFinder (port 50000 may be in use)" << endl;
+            unregister_client(m_state);
             m_running = false;
             return;
         }
 
-        if (!beatFinder.start()) {
+        if (!beatlink::BeatFinder::getInstance().start()) {
             cerr << "beatlink~: Failed to start BeatFinder (port 50001 may be in use)" << endl;
-            deviceFinder.stop();
+            beatlink::DeviceFinder::getInstance().stop();
+            unregister_client(m_state);
             m_running = false;
             return;
         }
@@ -196,21 +179,32 @@ private:
 
         m_poll_timer.stop();
 
-        auto& deviceFinder = beatlink::DeviceFinder::getInstance();
-        auto& beatFinder = beatlink::BeatFinder::getInstance();
-
-        beatFinder.stop();
-        deviceFinder.stop();
+        unregister_client(m_state);
+        clear_pending_events();
 
         cout << "beatlink~: Stopped" << endl;
     }
 
     void process_pending_beats() {
         std::queue<BeatInfo> beats_to_process;
+        std::queue<InfoMessage> info_to_process;
 
         {
-            std::lock_guard<std::mutex> lock(m_beat_mutex);
-            std::swap(beats_to_process, m_beat_queue);
+            std::lock_guard<std::mutex> lock(m_state->mutex);
+            std::swap(beats_to_process, m_state->beat_queue);
+            std::swap(info_to_process, m_state->info_queue);
+        }
+
+        while (!info_to_process.empty()) {
+            const InfoMessage info = info_to_process.front();
+            info_to_process.pop();
+
+            atoms as;
+            as.push_back(info.selector);
+            as.push_back(info.device_number);
+            as.push_back(info.device_name);
+            as.push_back(info.address);
+            out_info.send(as);
         }
 
         while (!beats_to_process.empty()) {
@@ -266,8 +260,173 @@ private:
         as.push_back("status");
         as.push_back(m_running ? "running" : "stopped");
         as.push_back(m_last_bpm);
+        as.push_back(static_cast<int>(active_client_count()));
         out_info.send(as);
+    }
+
+    void clear_pending_events() {
+        std::lock_guard<std::mutex> lock(m_state->mutex);
+        std::queue<BeatInfo> empty_beats;
+        std::queue<InfoMessage> empty_info;
+        std::swap(m_state->beat_queue, empty_beats);
+        std::swap(m_state->info_queue, empty_info);
+    }
+
+    static std::mutex& registry_mutex() {
+        static std::mutex mutex;
+        return mutex;
+    }
+
+    static std::vector<std::weak_ptr<SharedState>>& registry_clients() {
+        static std::vector<std::weak_ptr<SharedState>> clients;
+        return clients;
+    }
+
+    static bool& registry_listeners_installed() {
+        static bool installed = false;
+        return installed;
+    }
+
+    static void prune_clients_locked() {
+        auto& clients = registry_clients();
+        std::vector<std::weak_ptr<SharedState>> live_clients;
+        live_clients.reserve(clients.size());
+
+        for (auto& weak_client : clients) {
+            if (auto client = weak_client.lock()) {
+                if (client->accepting.load()) {
+                    live_clients.push_back(client);
+                }
+            }
+        }
+
+        clients.swap(live_clients);
+    }
+
+    static void install_global_listeners_locked() {
+        if (registry_listeners_installed()) {
+            return;
+        }
+
+        auto& deviceFinder = beatlink::DeviceFinder::getInstance();
+        auto& beatFinder = beatlink::BeatFinder::getInstance();
+
+        deviceFinder.clearListeners();
+        beatFinder.clearListeners();
+
+        deviceFinder.addDeviceFoundListener([](const beatlink::DeviceAnnouncement& device) {
+            dispatch_device_info("found", device);
+        });
+
+        deviceFinder.addDeviceLostListener([](const beatlink::DeviceAnnouncement& device) {
+            dispatch_device_info("lost", device);
+        });
+
+        beatFinder.addBeatListener([](const beatlink::Beat& beat) {
+            dispatch_beat(beat);
+        });
+
+        registry_listeners_installed() = true;
+    }
+
+    static void register_client(const std::shared_ptr<SharedState>& state) {
+        std::lock_guard<std::mutex> lock(registry_mutex());
+        prune_clients_locked();
+        install_global_listeners_locked();
+        registry_clients().push_back(state);
+    }
+
+    static void unregister_client(const std::shared_ptr<SharedState>& state) {
+        bool should_stop_finders = false;
+
+        {
+            std::lock_guard<std::mutex> lock(registry_mutex());
+            state->accepting.store(false);
+            prune_clients_locked();
+            should_stop_finders = registry_clients().empty();
+            if (should_stop_finders) {
+                registry_listeners_installed() = false;
+            }
+        }
+
+        if (should_stop_finders) {
+            beatlink::BeatFinder::getInstance().stop();
+            beatlink::DeviceFinder::getInstance().stop();
+            beatlink::BeatFinder::getInstance().clearListeners();
+            beatlink::DeviceFinder::getInstance().clearListeners();
+        }
+    }
+
+    static size_t active_client_count() {
+        std::lock_guard<std::mutex> lock(registry_mutex());
+        prune_clients_locked();
+        return registry_clients().size();
+    }
+
+    static std::vector<std::shared_ptr<SharedState>> snapshot_clients() {
+        std::lock_guard<std::mutex> lock(registry_mutex());
+        prune_clients_locked();
+
+        std::vector<std::shared_ptr<SharedState>> clients;
+        for (auto& weak_client : registry_clients()) {
+            if (auto client = weak_client.lock()) {
+                clients.push_back(client);
+            }
+        }
+
+        return clients;
+    }
+
+    static void dispatch_device_info(const std::string& selector, const beatlink::DeviceAnnouncement& device) {
+        InfoMessage info;
+        info.selector = selector;
+        info.device_number = static_cast<int>(device.getDeviceNumber());
+        info.device_name = device.getDeviceName();
+        info.address = device.getAddress().to_string();
+
+        for (const auto& client : snapshot_clients()) {
+            enqueue_info(client, info);
+        }
+    }
+
+    static void dispatch_beat(const beatlink::Beat& beat) {
+        BeatInfo info;
+        info.device_number = beat.getDeviceNumber();
+        info.bpm = beat.getEffectiveTempo();
+        info.beat_within_bar = beat.getBeatWithinBar();
+        info.pitch_percent = beatlink::Util::pitchToPercentage(beat.getPitch());
+
+        for (const auto& client : snapshot_clients()) {
+            enqueue_beat(client, info);
+        }
+    }
+
+    static void enqueue_info(const std::shared_ptr<SharedState>& state, const InfoMessage& info) {
+        if (!state->accepting.load()) {
+            return;
+        }
+
+        std::lock_guard<std::mutex> lock(state->mutex);
+        if (state->accepting.load()) {
+            state->info_queue.push(info);
+        }
+    }
+
+    static void enqueue_beat(const std::shared_ptr<SharedState>& state, const BeatInfo& info) {
+        if (!state->accepting.load()) {
+            return;
+        }
+
+        const int filter = state->device_filter.load();
+        if (filter > 0 && info.device_number != filter) {
+            return;
+        }
+
+        std::lock_guard<std::mutex> lock(state->mutex);
+        if (state->accepting.load()) {
+            state->beat_queue.push(info);
+        }
     }
 };
 
-MIN_EXTERNAL(beatlink_tilde);
+MIN_EXTERNAL_CUSTOM(beatlink_tilde, beatlink~);

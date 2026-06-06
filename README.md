@@ -16,18 +16,40 @@ Max/MSP external for receiving beat and tempo information from Pioneer DJ equipm
 - CMake 3.19+
 - Xcode (macOS) or Visual Studio (Windows)
 - C++20 compatible compiler
+- Git submodules
 
 ### macOS
 
 ```bash
+git clone --recursive https://github.com/daitomanabe/beatlink-max.git
+cd beatlink-max
+
 mkdir build && cd build
 cmake .. -G Xcode
 cmake --build . --config Release
 ```
 
+The built external is written to `externals/beatlink~.mxo`. To use the package
+from Max, place or symlink the repository folder into your Max Packages folder,
+for example:
+
+```bash
+cd ..
+ln -s "$(pwd)" "$HOME/Documents/Max 8/Packages/beatlink"
+```
+
+If you cloned without `--recursive`, initialize dependencies first:
+
+```bash
+git submodule update --init --recursive
+```
+
 ### Windows
 
 ```bash
+git clone --recursive https://github.com/daitomanabe/beatlink-max.git
+cd beatlink-max
+
 mkdir build && cd build
 cmake .. -G "Visual Studio 17 2022"
 cmake --build . --config Release
@@ -59,6 +81,9 @@ The `beatlink~` object has the following inlets and outlets:
 ### Attributes
 - `@autostart 1/0`: Automatically start on object creation (default: 1)
 - `@device N`: Filter to specific device number, 0 = all (default: 0)
+
+`beatlink~` starts on `loadbang` when `@autostart` is enabled. Beat and device
+callbacks are queued from the network thread and emitted on Max's main thread.
 
 ## Example
 
