@@ -1,457 +1,1152 @@
 {
-	"patcher" : 	{
-		"fileversion" : 1,
-		"appversion" : 		{
-			"major" : 8,
-			"minor" : 6,
-			"revision" : 0,
-			"architecture" : "x64",
-			"modernui" : 1
+	"patcher": {
+		"fileversion": 1,
+		"appversion": {
+			"major": 8,
+			"minor": 6,
+			"revision": 0,
+			"architecture": "x64",
+			"modernui": 1
 		},
-		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 900.0, 700.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
-		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
-		"assistshowspatchername" : 0,
-		"boxes" : [
+		"classnamespace": "box",
+		"rect": [
+			100,
+			100,
+			1040,
+			780
+		],
+		"bglocked": 0,
+		"openinpresentation": 0,
+		"default_fontsize": 12,
+		"default_fontface": 0,
+		"default_fontname": "Arial",
+		"gridonopen": 1,
+		"gridsize": [
+			15,
+			15
+		],
+		"gridsnaponopen": 1,
+		"objectsnaponopen": 1,
+		"statusbarvisible": 2,
+		"toolbarvisible": 1,
+		"lefttoolbarpinned": 0,
+		"toptoolbarpinned": 0,
+		"righttoolbarpinned": 0,
+		"bottomtoolbarpinned": 0,
+		"toolbars_unpinned_last_save": 0,
+		"tallnewobj": 0,
+		"boxanimatetime": 200,
+		"enablehscroll": 1,
+		"enablevscroll": 1,
+		"devicewidth": 0,
+		"description": "Help patch for beatlink~",
+		"digest": "Pro DJ Link beat and device monitor",
+		"tags": "network,dj,sync,beatlink",
+		"style": "",
+		"subpatcher_template": "",
+		"assistshowspatchername": 0,
+		"boxes": [
 			{
-				"box" : 				{
-					"fontface" : 1,
-					"fontsize" : 24.0,
-					"id" : "obj-title",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 20.0, 400.0, 33.0 ],
-					"text" : "beatlink~"
+				"box": {
+					"id": "obj-title",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						20,
+						420,
+						34
+					],
+					"fontface": 1,
+					"fontsize": 24,
+					"text": "beatlink~"
 				}
 			},
 			{
-				"box" : 				{
-					"fontsize" : 13.0,
-					"id" : "obj-subtitle",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 55.0, 500.0, 36.0 ],
-					"text" : "Receive beat and tempo information from Pioneer DJ equipment\nvia the Pro DJ Link protocol"
+				"box": {
+					"id": "obj-subtitle",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						56,
+						780,
+						22
+					],
+					"fontsize": 13,
+					"text": "Receive beat, tempo, pitch, and device announcements from Pioneer DJ equipment over Pro DJ Link."
 				}
 			},
 			{
-				"box" : 				{
-					"bgcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
-					"fontsize" : 12.0,
-					"id" : "obj-section1",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 105.0, 860.0, 20.0 ],
-					"text" : "  Basic Usage",
-					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+				"box": {
+					"id": "sec-basic",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						96,
+						960,
+						22
+					],
+					"bgcolor": [
+						0.18,
+						0.18,
+						0.18,
+						1
+					],
+					"textcolor": [
+						1,
+						1,
+						1,
+						1
+					],
+					"fontsize": 12,
+					"text": "  Basic usage"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-start",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 40.0, 140.0, 35.0, 22.0 ],
-					"text" : "start"
+				"box": {
+					"id": "msg-bang",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						44,
+						134,
+						44,
+						22
+					],
+					"text": "bang",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-stop",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 85.0, 140.0, 33.0, 22.0 ],
-					"text" : "stop"
+				"box": {
+					"id": "msg-start",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						98,
+						134,
+						48,
+						22
+					],
+					"text": "start",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-devices",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 128.0, 140.0, 47.0, 22.0 ],
-					"text" : "devices"
+				"box": {
+					"id": "msg-stop",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						156,
+						134,
+						44,
+						22
+					],
+					"text": "stop",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-status",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 185.0, 140.0, 39.0, 22.0 ],
-					"text" : "status"
+				"box": {
+					"id": "msg-devices",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						210,
+						134,
+						58,
+						22
+					],
+					"text": "devices",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-beatlink",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 7,
-					"outlettype" : [ "bang", "bang", "float", "int", "int", "float", "" ],
-					"patching_rect" : [ 40.0, 180.0, 380.0, 22.0 ],
-					"text" : "beatlink~"
+				"box": {
+					"id": "msg-status",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						278,
+						134,
+						52,
+						22
+					],
+					"text": "status",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-beat-button",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 40.0, 220.0, 24.0, 24.0 ]
+				"box": {
+					"id": "note-autostart",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						350,
+						133,
+						570,
+						36
+					],
+					"linecount": 2,
+					"text": "This help patch uses @autostart 0, so opening help does not bind UDP ports until start is clicked."
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-downbeat-button",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 100.0, 220.0, 24.0, 24.0 ]
+				"box": {
+					"id": "obj-beatlink",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 7,
+					"patching_rect": [
+						44,
+						184,
+						250,
+						22
+					],
+					"text": "beatlink~ @autostart 0",
+					"outlettype": [
+						"bang",
+						"bang",
+						"float",
+						"int",
+						"int",
+						"float",
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"fontsize" : 24.0,
-					"id" : "obj-bpm-display",
-					"maxclass" : "flonum",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 160.0, 220.0, 80.0, 35.0 ]
+				"box": {
+					"id": "label-object",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						304,
+						184,
+						90,
+						20
+					],
+					"text": "control inlet"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-beatpos-display",
-					"maxclass" : "number",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 260.0, 220.0, 40.0, 22.0 ]
+				"box": {
+					"id": "sec-outlets",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						230,
+						960,
+						22
+					],
+					"bgcolor": [
+						0.18,
+						0.18,
+						0.18,
+						1
+					],
+					"textcolor": [
+						1,
+						1,
+						1,
+						1
+					],
+					"fontsize": 12,
+					"text": "  Outlets"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-device-display",
-					"maxclass" : "number",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 320.0, 220.0, 40.0, 22.0 ]
+				"box": {
+					"id": "mon-beat",
+					"maxclass": "button",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						44,
+						270,
+						24,
+						24
+					],
+					"outlettype": [
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-pitch-display",
-					"maxclass" : "flonum",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 380.0, 220.0, 60.0, 22.0 ]
+				"box": {
+					"id": "mon-downbeat",
+					"maxclass": "button",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						108,
+						270,
+						24,
+						24
+					],
+					"outlettype": [
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-info-display",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 460.0, 220.0, 200.0, 22.0 ]
+				"box": {
+					"id": "mon-bpm",
+					"maxclass": "flonum",
+					"numinlets": 1,
+					"numoutlets": 2,
+					"patching_rect": [
+						180,
+						266,
+						82,
+						35
+					],
+					"format": 6,
+					"outlettype": [
+						"",
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-beat",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 40.0, 250.0, 50.0, 20.0 ],
-					"text" : "beat"
+				"box": {
+					"id": "mon-beatpos",
+					"maxclass": "number",
+					"numinlets": 1,
+					"numoutlets": 2,
+					"patching_rect": [
+						292,
+						270,
+						52,
+						22
+					],
+					"outlettype": [
+						"",
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-downbeat",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 90.0, 250.0, 60.0, 20.0 ],
-					"text" : "downbeat"
+				"box": {
+					"id": "mon-device",
+					"maxclass": "number",
+					"numinlets": 1,
+					"numoutlets": 2,
+					"patching_rect": [
+						374,
+						270,
+						52,
+						22
+					],
+					"outlettype": [
+						"",
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-bpm",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 160.0, 258.0, 80.0, 20.0 ],
-					"text" : "BPM"
+				"box": {
+					"id": "mon-pitch",
+					"maxclass": "flonum",
+					"numinlets": 1,
+					"numoutlets": 2,
+					"patching_rect": [
+						456,
+						270,
+						82,
+						22
+					],
+					"format": 6,
+					"outlettype": [
+						"",
+						"bang"
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-beatpos",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 250.0, 50.0, 20.0 ],
-					"text" : "beat#"
+				"box": {
+					"id": "lbl-beat",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						36,
+						302,
+						52,
+						20
+					],
+					"text": "beat"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-device",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 316.0, 250.0, 50.0, 20.0 ],
-					"text" : "device#"
+				"box": {
+					"id": "lbl-downbeat",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						88,
+						302,
+						80,
+						20
+					],
+					"text": "downbeat"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-pitch",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 380.0, 250.0, 60.0, 20.0 ],
-					"text" : "pitch %"
+				"box": {
+					"id": "lbl-bpm",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						194,
+						302,
+						52,
+						20
+					],
+					"text": "bpm"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-label-info",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 460.0, 250.0, 100.0, 20.0 ],
-					"text" : "info/status"
+				"box": {
+					"id": "lbl-beatpos",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						282,
+						302,
+						70,
+						20
+					],
+					"text": "beat pos"
 				}
 			},
 			{
-				"box" : 				{
-					"bgcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
-					"fontsize" : 12.0,
-					"id" : "obj-section2",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 290.0, 860.0, 20.0 ],
-					"text" : "  Attributes",
-					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+				"box": {
+					"id": "lbl-device",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						374,
+						302,
+						62,
+						20
+					],
+					"text": "device"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-attr-comment",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 40.0, 320.0, 400.0, 47.0 ],
-					"text" : "@autostart <0 or 1> : Auto-start listening (default: 1)\n@device <0-6> : Filter by device number (0 = all devices)"
+				"box": {
+					"id": "lbl-pitch",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						456,
+						302,
+						72,
+						20
+					],
+					"text": "pitch %"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-beatlink-filtered",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 7,
-					"outlettype" : [ "bang", "bang", "float", "int", "int", "float", "" ],
-					"patching_rect" : [ 40.0, 380.0, 380.0, 22.0 ],
-					"text" : "beatlink~ @device 1 @autostart 0"
+				"box": {
+					"id": "sec-info",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						344,
+						960,
+						22
+					],
+					"bgcolor": [
+						0.18,
+						0.18,
+						0.18,
+						1
+					],
+					"textcolor": [
+						1,
+						1,
+						1,
+						1
+					],
+					"fontsize": 12,
+					"text": "  Info outlet routing"
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-filtered-comment",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 430.0, 380.0, 300.0, 20.0 ],
-					"text" : "<- Listen only to device 1, don't auto-start"
+				"box": {
+					"id": "route-info",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 6,
+					"patching_rect": [
+						44,
+						386,
+						256,
+						22
+					],
+					"text": "route found lost device devices status",
+					"outlettype": [
+						"",
+						"",
+						"",
+						"int",
+						"",
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"bgcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
-					"fontsize" : 12.0,
-					"id" : "obj-section3",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 420.0, 860.0, 20.0 ],
-					"text" : "  Messages",
-					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+				"box": {
+					"id": "prepend-found",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						44,
+						430,
+						78,
+						22
+					],
+					"text": "prepend set",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-msg-comment",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 40.0, 450.0, 500.0, 74.0 ],
-					"text" : "start : Start listening for DJ Link devices and beats\nstop : Stop listening\ndevices : Output list of discovered devices from outlet 7\nstatus : Output current status (running/stopped, last BPM) from outlet 7\nbang : Poll for pending beat updates"
+				"box": {
+					"id": "prepend-lost",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						174,
+						430,
+						78,
+						22
+					],
+					"text": "prepend set",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"bgcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
-					"fontsize" : 12.0,
-					"id" : "obj-section4",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 540.0, 860.0, 20.0 ],
-					"text" : "  Outlets",
-					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+				"box": {
+					"id": "prepend-device",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						304,
+						430,
+						78,
+						22
+					],
+					"text": "prepend set",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-outlet-comment",
-					"linecount" : 7,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 40.0, 570.0, 500.0, 100.0 ],
-					"text" : "1. beat (bang) : Outputs bang on each beat\n2. downbeat (bang) : Outputs bang on beat 1 (downbeat)\n3. bpm (float) : Current BPM with pitch adjustment\n4. beat_pos (int) : Beat position within bar (1-4)\n5. device (int) : Device/player number\n6. pitch (float) : Pitch adjustment percentage\n7. info (list) : Device info and status messages"
+				"box": {
+					"id": "prepend-status",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 1,
+					"patching_rect": [
+						566,
+						430,
+						78,
+						22
+					],
+					"text": "prepend set",
+					"outlettype": [
+						""
+					]
 				}
 			},
 			{
-				"box" : 				{
-					"id" : "obj-note",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 550.0, 450.0, 300.0, 33.0 ],
-					"text" : "Note: Uses UDP ports 50000 and 50001\nRequires macOS 13.3 or later",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				"box": {
+					"id": "mon-found",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						44,
+						470,
+						112,
+						22
+					],
+					"text": "no device",
+					"outlettype": [
+						""
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "mon-lost",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						174,
+						470,
+						112,
+						22
+					],
+					"text": "no device",
+					"outlettype": [
+						""
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "mon-device-info",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						304,
+						470,
+						142,
+						22
+					],
+					"text": "no device",
+					"outlettype": [
+						""
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "mon-device-count",
+					"maxclass": "number",
+					"numinlets": 1,
+					"numoutlets": 2,
+					"patching_rect": [
+						480,
+						470,
+						52,
+						22
+					],
+					"outlettype": [
+						"",
+						"bang"
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "mon-status",
+					"maxclass": "message",
+					"numinlets": 2,
+					"numoutlets": 1,
+					"patching_rect": [
+						566,
+						470,
+						150,
+						22
+					],
+					"text": "stopped 0. 0",
+					"outlettype": [
+						""
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "print-info",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						752,
+						430,
+						118,
+						22
+					],
+					"text": "print beatlink-info"
+				}
+			},
+			{
+				"box": {
+					"id": "lbl-found",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						44,
+						500,
+						76,
+						20
+					],
+					"text": "found"
+				}
+			},
+			{
+				"box": {
+					"id": "lbl-lost",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						174,
+						500,
+						76,
+						20
+					],
+					"text": "lost"
+				}
+			},
+			{
+				"box": {
+					"id": "lbl-device-info",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						304,
+						500,
+						76,
+						20
+					],
+					"text": "device"
+				}
+			},
+			{
+				"box": {
+					"id": "lbl-device-count",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						466,
+						500,
+						112,
+						20
+					],
+					"text": "devices count"
+				}
+			},
+			{
+				"box": {
+					"id": "lbl-status",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						566,
+						500,
+						260,
+						20
+					],
+					"text": "status: state last_bpm active_clients"
+				}
+			},
+			{
+				"box": {
+					"id": "sec-attrs",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						24,
+						548,
+						960,
+						22
+					],
+					"bgcolor": [
+						0.18,
+						0.18,
+						0.18,
+						1
+					],
+					"textcolor": [
+						1,
+						1,
+						1,
+						1
+					],
+					"fontsize": 12,
+					"text": "  Attributes and message formats"
+				}
+			},
+			{
+				"box": {
+					"id": "attr-example",
+					"maxclass": "newobj",
+					"numinlets": 1,
+					"numoutlets": 7,
+					"patching_rect": [
+						44,
+						586,
+						274,
+						22
+					],
+					"text": "beatlink~ @device 1 @autostart 0",
+					"outlettype": [
+						"bang",
+						"bang",
+						"float",
+						"int",
+						"int",
+						"float",
+						""
+					]
+				}
+			},
+			{
+				"box": {
+					"id": "attr-note",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						340,
+						579,
+						560,
+						42
+					],
+					"linecount": 2,
+					"text": "@device filters beat packets by player number. @autostart 0 keeps a patch from opening sockets until start/loadbang behavior is wanted."
+				}
+			},
+			{
+				"box": {
+					"id": "format-note",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						44,
+						628,
+						600,
+						68
+					],
+					"linecount": 4,
+					"text": "Info outlet formats:\nfound/lost/device <device_number> <device_name> <ip_address>\ndevices <count>\nstatus <running|stopped> <last_bpm> <active_clients>"
+				}
+			},
+			{
+				"box": {
+					"id": "port-note",
+					"maxclass": "comment",
+					"numinlets": 1,
+					"numoutlets": 0,
+					"patching_rect": [
+						44,
+						706,
+						740,
+						36
+					],
+					"linecount": 2,
+					"text": "Network: listens on UDP 50000 for announcements and UDP 50001 for beat packets. macOS build target: 13.3 or later."
 				}
 			}
 		],
-		"lines" : [
+		"lines": [
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beatlink", 0 ],
-					"source" : [ "obj-start", 0 ]
+				"patchline": {
+					"source": [
+						"msg-bang",
+						0
+					],
+					"destination": [
+						"obj-beatlink",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beatlink", 0 ],
-					"source" : [ "obj-stop", 0 ]
+				"patchline": {
+					"source": [
+						"msg-start",
+						0
+					],
+					"destination": [
+						"obj-beatlink",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beatlink", 0 ],
-					"source" : [ "obj-devices", 0 ]
+				"patchline": {
+					"source": [
+						"msg-stop",
+						0
+					],
+					"destination": [
+						"obj-beatlink",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beatlink", 0 ],
-					"source" : [ "obj-status", 0 ]
+				"patchline": {
+					"source": [
+						"msg-devices",
+						0
+					],
+					"destination": [
+						"obj-beatlink",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beat-button", 0 ],
-					"source" : [ "obj-beatlink", 0 ]
+				"patchline": {
+					"source": [
+						"msg-status",
+						0
+					],
+					"destination": [
+						"obj-beatlink",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-downbeat-button", 0 ],
-					"source" : [ "obj-beatlink", 1 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						0
+					],
+					"destination": [
+						"mon-beat",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-bpm-display", 0 ],
-					"source" : [ "obj-beatlink", 2 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						1
+					],
+					"destination": [
+						"mon-downbeat",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-beatpos-display", 0 ],
-					"source" : [ "obj-beatlink", 3 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						2
+					],
+					"destination": [
+						"mon-bpm",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-device-display", 0 ],
-					"source" : [ "obj-beatlink", 4 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						3
+					],
+					"destination": [
+						"mon-beatpos",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-pitch-display", 0 ],
-					"source" : [ "obj-beatlink", 5 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						4
+					],
+					"destination": [
+						"mon-device",
+						0
+					]
 				}
 			},
 			{
-				"patchline" : 				{
-					"destination" : [ "obj-info-display", 1 ],
-					"source" : [ "obj-beatlink", 6 ]
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						5
+					],
+					"destination": [
+						"mon-pitch",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"obj-beatlink",
+						6
+					],
+					"destination": [
+						"route-info",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						0
+					],
+					"destination": [
+						"prepend-found",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						1
+					],
+					"destination": [
+						"prepend-lost",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						2
+					],
+					"destination": [
+						"prepend-device",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						3
+					],
+					"destination": [
+						"mon-device-count",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						4
+					],
+					"destination": [
+						"prepend-status",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"route-info",
+						5
+					],
+					"destination": [
+						"print-info",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"prepend-found",
+						0
+					],
+					"destination": [
+						"mon-found",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"prepend-lost",
+						0
+					],
+					"destination": [
+						"mon-lost",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"prepend-device",
+						0
+					],
+					"destination": [
+						"mon-device-info",
+						0
+					]
+				}
+			},
+			{
+				"patchline": {
+					"source": [
+						"prepend-status",
+						0
+					],
+					"destination": [
+						"mon-status",
+						0
+					]
 				}
 			}
-		],
-		"dependency_cache" : [  ],
-		"autosave" : 0
+		]
 	}
 }
